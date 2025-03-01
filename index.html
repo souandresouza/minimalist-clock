@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relógio Minimalista</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap">
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        #clock {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            transition: box-shadow 0.5s;
+        }
+
+        #time {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4em;
+            font-weight: 700;
+            transition: text-shadow 0.5s;
+        }
+
+        #hours, #minutes, #seconds {
+            margin: 0 5px;
+        }
+
+        #date {
+            font-size: 1.5em;
+            margin-top: 10px;
+            transition: text-shadow 0.5s;
+        }
+
+        /* Tema Claro (6h às 17h59) */
+        body.light {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        body.light #clock {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        body.light #time,
+        body.light #date {
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Tema Escuro (18h às 5h59) */
+        body.dark {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        body.dark #clock {
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark #time,
+        body.dark #date {
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        @media screen and (max-width: 600px) {
+            #clock {
+                padding: 10px;
+            }
+            #time {
+                font-size: 2.5em;
+            }
+            #date {
+                font-size: 1em;
+            }
+        }
+
+        /* Para orientação retrato */
+        @media screen and (orientation: portrait) {
+            #time {
+                flex-direction: column;
+                font-size: 3em;
+            }
+
+            #hours, #minutes, #seconds {
+                margin: 5px 0;
+            }
+        }
+
+        /* Para orientação paisagem */
+        @media screen and (orientation: landscape) {
+            #clock {
+                width: 50%;
+            }
+        }
+
+        @media screen and (min-resolution: 300dpi) {
+            #clock {
+                width: 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="clock">
+        <div id="time">
+            <div id="hours">00</div>
+            <div id="minutes">00</div>
+            <div id="seconds">00</div>
+        </div>
+        <div id="date"></div>
+    </div>
+
+    <script>
+        const WEEK = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
+
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+
+            // Atualiza os elementos de horas, minutos e segundos
+            document.getElementById('hours').innerText = zeroPadding(hours, 2);
+            document.getElementById('minutes').innerText = zeroPadding(minutes, 2);
+            document.getElementById('seconds').innerText = zeroPadding(seconds, 2);
+
+            // Piscar os dois pontos (opcional)
+            const timeEl = document.getElementById('time');
+            if (seconds % 2 === 0) {
+                timeEl.classList.add('blink');
+            } else {
+                timeEl.classList.remove('blink');
+            }
+
+            // Atualiza a data
+            document.getElementById('date').innerText =
+                zeroPadding(now.getDate(), 2) + ' ' +
+                zeroPadding(now.getMonth() + 1, 2) + ' ' +
+                now.getFullYear() + ' - ' +
+                WEEK[now.getDay()];
+
+            // Alterna tema baseado no horário
+            if (hours >= 6 && hours < 18) {
+                document.body.classList.remove('dark');
+                document.body.classList.add('light');
+            } else {
+                document.body.classList.remove('light');
+                document.body.classList.add('dark');
+            }
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        function zeroPadding(num, digit) {
+            return String(num).padStart(digit, '0');
+        }
+    </script>
+</body>
+</html>
